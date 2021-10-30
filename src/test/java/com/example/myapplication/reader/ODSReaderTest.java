@@ -3,8 +3,6 @@ package com.example.myapplication.reader;
 import com.example.myapplication.model.Card;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

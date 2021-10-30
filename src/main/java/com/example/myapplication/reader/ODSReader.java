@@ -1,13 +1,17 @@
 package com.example.myapplication.reader;
 
 import com.example.myapplication.model.Card;
+import com.example.myapplication.model.Person;
+import com.example.myapplication.model.PersonCollector;
 import com.github.miachm.sods.SpreadSheet;
+import one.util.streamex.StreamEx;
 import org.apache.logging.log4j.util.Strings;
+import org.javatuples.Pair;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -54,6 +58,7 @@ public class ODSReader {
                 text = text.replaceAll(s, " ");
             }
         }
+        text = text.trim();
 
         var fullNames = new ArrayList<String>();
         fullNames.addAll(List.of(text.split(", ")));
