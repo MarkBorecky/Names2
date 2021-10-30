@@ -54,7 +54,7 @@ public class ODSReader {
         var regex = "[A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}[ ][A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}(, [A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}){0,5}";
         var splitedText = text.split(regex);
         for (var s : splitedText) {
-            if (!s.equals(" ")) {
+            if (Strings.isNotBlank(s)) {
                 text = text.replaceAll(s, " ");
             }
         }
