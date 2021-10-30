@@ -133,33 +133,26 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase9() {
         var text = "Dfg dfg dgf dgddg Poźniakowowie Filip, Stefania, Melecjusz df fdfdf ddffd Ddf dfgdf fdgd";
-//        var regex = "[A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}[ ][A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}[[, ][A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}]{0,9}";
-        var regex = "[A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}[ ][A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}(, [A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}){1,2}";
-        var splitedText = text.split(regex);
-        for (var s : splitedText) {
-            text = text.replaceAll(s, "");
-        }
-
-        var fullNames = new ArrayList<String>();
-        fullNames.addAll(List.of(text.split(", ")));
-        var list = new ArrayList<String>();
-        list.add(fullNames.remove(0));
-        var surname = list.get(0).split(" ")[0];
-        fullNames.forEach(x -> list.add(String.format("%s %s", surname, x)));
-
-        System.out.println("text = " + list);
+        var list = ODSReader.getFullNames(text);
         assertEquals(List.of("Poźniakowowie Filip","Poźniakowowie Stefania", "Poźniakowowie Melecjusz"), list);
     }
 
     @Test
     public void checkBorderCase10() {
-        var text = "Aaa Bbb, Ccc, Ddd";
-        var regex = ", [A-Z][a-z]{1,9}";
-        var result = text.replaceAll(regex, "_");
+        var text = "k. 7 (brak k. 7 mej wszystkie karty luźne) (отсутствие 7 л., все листы разрозненные)";
+        var result = ODSReader.getPlainTextWithouRegexCharacters(text);
         System.out.println("result = " + result);
-        assertEquals(true, result);
+        assertEquals("k 7 brak k 7 mej wszystkie karty luźne отсутствие 7 л, все листы разрозненные", result);
     }
 
+    @Test
+    public void testPair() {
+        var text = new String[]{"John", "Doe", "Jan", "Kowalski", "Maria", "Currie-Skłodowska"};
+        var expected = List.of("John Doe", "Jan Kowalski", "Maria Currie-Skłodowska");
+        var result = ODSReader.pairStrings(text);
+        assertEquals(expected.size(), result.size());
+        expected.forEach(x -> result.contains(x));
+    }
 }
 
 
