@@ -3,16 +3,16 @@ package com.example.myapplication.reader;
 import com.example.myapplication.model.Card;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.example.myapplication.converter.CardConverter.*;
+import static com.example.myapplication.reader.ODSReader.getDataDaoList;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ODSReaderTest {
+public class CardConverterTest {
 
     @Test
     public void shouldMatch() {
@@ -34,7 +34,7 @@ public class ODSReaderTest {
                 {"", "", "", "", "", "Zero Zorro cccc skdjhsd sd sd dfs", ""},
                 {"", "", "", "", "", "", ""}
         };
-        var result = ODSReader.getDataDaoList(text);
+        var result = getDataDaoList(text);
         var expected = List.of(new Card("Zero Zorro cccc skdjhsd sd sd dfs", List.of("Zero Zorro")));
         for (var i = 0; i < result.size(); i++) {
             assertEquals(expected.get(i), result.get(i));
@@ -44,7 +44,7 @@ public class ODSReaderTest {
     @Test
     public void ShouldReturnOnlyWordWrittenFromCapitalLetter2() {
         var text = new String[][]{{"", "", "", "", "", "Zero Zero cccc Andrzej sd Kowalski dfs", ""}};
-        var result = ODSReader.getDataDaoList(text);
+        var result = getDataDaoList(text);
         var expected = List.of(
                 new Card("Zero Zero cccc Andrzej Kowalski dfs", List.of("Zero Zero", "Andrzej Kowalski"))
         );
@@ -68,7 +68,7 @@ public class ODSReaderTest {
     @Test
     public void shouldGetFirstnameAndLastname() {
         var text = "Do sdf Mark Smith sdf sd fsdf John Doe sf sf sdf.";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         List<String> expected = List.of("Mark Smith", "John Doe");
         assertEquals(expected, result);
     }
@@ -76,7 +76,7 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase1() {
         var text = "Tarnowicz Mikołaj syn prosfirni kradzież i zwrot pieniędzy z cerkwi drużyłowickiej – pokuta cerkiewna – wyznaczenie na djaczka";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         List<String> expected = List.of("Tarnowicz Mikołaj");
         assertEquals(expected, result);
     }
@@ -88,7 +88,7 @@ public class ODSReaderTest {
                 {"header1", "header2", "header3", "header4", "header5", "header6"},
                 {"", "", "", "", "", mainText, ""}
         };
-        var result = ODSReader.getDataDaoList(text);
+        var result = getDataDaoList(text);
         List<Card> expected = List.of(
                 new Card(mainText, List.of("Tarnowicz Mikołaj"))
         );
@@ -98,7 +98,7 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase5() {
         var text = "Manifest o urodzeniu przez wielką księżną Aleksandrę Józefównę córki Wiery ";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         List<String> expected = List.of("Aleksandrę Józefównę");
         assertEquals(expected, result);
     }
@@ -106,7 +106,7 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase6() {
         var text = "Kogaczewska Helena wdowa po duchownym przyjęcie z Djecezji mińskiej do litewskiej ";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         List<String> expected = List.of("Kogaczewska Helena");
         assertEquals(expected, result);
     }
@@ -114,7 +114,7 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase7() {
         var text = "„Pignilewski” Jan uczeń żyrowickich szkół duchownych udzielenie miejsca ponomara – zwolnienie za niespełnianie obowiązków – udzielenie miejsca djaczka";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         List<String> expected = List.of("Pignilewski Jan");
         assertEquals(expected, result);
     }
@@ -122,7 +122,7 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase8() {
         var text = "Kołosow Justyna Poźniakowowie Filip, Stefania, Melecjusz staroobrzędowcy przyjęcie prawosławia k. 7 (brak k. 7 mej wszystkie karty luźne) (отсутствие 7 л., все листы разрозненные)";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         List<String> expected = List.of(
                 "Kołosow Justyna",
                 "Poźniakowowie Filip",
@@ -135,14 +135,14 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase9() {
         var text = "Dfg dfg dgf dgddg Poźniakowowie Filip, Stefania, Melecjusz df fdfdf ddffd Ddf dfgdf fdgd";
-        var list = ODSReader.getFullNames(text);
+        var list = getFullNames(text);
         assertEquals(List.of("Poźniakowowie Filip", "Poźniakowowie Stefania", "Poźniakowowie Melecjusz"), list);
     }
 
     @Test
     public void checkBorderCase10() {
         var text = "k. 7 (brak k. 7 mej wszystkie karty luźne) (отсутствие 7 л., все листы разрозненные)";
-        var result = ODSReader.getPlainTextWithouRegexCharacters(text);
+        var result = getPlainTextWithouRegexCharacters(text);
         System.out.println("result = " + result);
         assertEquals("k 7 brak k 7 mej wszystkie karty luźne отсутствие 7 л, все листы разрозненные", result);
     }
@@ -151,7 +151,7 @@ public class ODSReaderTest {
     public void testPair() {
         var text = new String[]{"John", "Doe", "Jan", "Kowalski", "Maria", "Currie-Skłodowska"};
         var expected = List.of("John Doe", "Jan Kowalski", "Maria Currie-Skłodowska");
-        var result = ODSReader.pairStrings(text);
+        var result = pairStrings(text);
         assertEquals(expected.size(), result.size());
         expected.forEach(x -> result.contains(x));
     }
@@ -159,7 +159,7 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase11() {
         var text = "Odmowa przyłączenia maj. rząd. Krasne z par. przebrodzkiej do pohorskiej";
-        var result = ODSReader.getFullNames(text);
+        var result = getFullNames(text);
         System.out.println("result = " + result);
         assertEquals(Collections.EMPTY_LIST, result);
     }
@@ -167,11 +167,18 @@ public class ODSReaderTest {
     @Test
     public void checkBorderCase12() {
         var text = new String[][]{{"", "", "", "", "", "Odmowa przyłączenia maj. rząd. Krasne z par. przebrodzkiej do pohorskiej", ""}};
-        var result = ODSReader.getDataDaoList(text);
+        var result = getDataDaoList(text);
         var expected = List.of(new Card("Odmowa przyłączenia maj. rząd. Krasne z par. przebrodzkiej do pohorskiej", Collections.EMPTY_LIST));
         for (var i = 0; i < result.size(); i++) {
             assertEquals(expected.get(i), result.get(i));
         }
+    }
+
+    @Test
+    public void checkBorderCase13() {
+        var text = "Przesłanie wykazów osób, które przystąpiły lub nie do spowiedzi za r. 1854. Przyjmowanie do spowiedzi żołnierzy w cerkwiach niewojskowych. Oddelegowanie duchownego dla eksportacji zwłok szer. Andrejewa Aleksego";
+        var result = getFullNames(text);
+        assertEquals("Andrejewa Aleksego", result.get(0));
     }
 }
 

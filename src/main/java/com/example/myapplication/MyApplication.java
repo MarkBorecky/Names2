@@ -15,6 +15,7 @@ import java.util.List;
 public class MyApplication implements CommandLineRunner {
 
     private static String SOURCE = "./src/main/resources/wilno fiszki całość.ods";
+//    private static String SOURCE = "./src/test/resources/test1.ods";
     private final static List<Card> cards = new ArrayList<>();
 
     @RequestMapping("/cards")
