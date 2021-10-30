@@ -3,7 +3,6 @@ package com.example.myapplication.reader;
 import com.example.myapplication.model.Card;
 import com.github.miachm.sods.SpreadSheet;
 import org.apache.logging.log4j.util.Strings;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,16 +39,60 @@ public class ODSReader {
     }
 
     private static String getColumn5(Object[] objects) {
-        return  (String) objects[5];
+        return (String) objects[5];
     }
 
     public static Card getCards(String text) {
         return new Card(text, getFullNames(text));
     }
 
+    private static Pair<String, ArrayList<String>> getFamillyNames(String text) {
+        var regex = "[A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}[ ][A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}(, [A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}){0,5}";
+        var splitedText = text.split(regex);
+        for (var s : splitedText) {
+            if (!s.equals(" ")) {
+                text = text.replaceAll(s, " ");
+            }
+        }
+
+        var fullNames = new ArrayList<String>();
+        fullNames.addAll(List.of(text.split(", ")));
+        var list = new ArrayList<String>();
+        var toRemove = new ArrayList<String>();
+        var firstFullName = fullNames.remove(0);
+        var streamStr = firstFullName.split(" ");
+        List<Person> people = pairStrings(streamStr);
+
+        people.forEach(p -> list.add(p.toString()));
+        var surname = people.get(people.size() - 1).lastName();
+        toRemove.add(firstFullName);
+        fullNames.forEach(x -> {
+                    list.add(String.format("%s %s", surname, x));
+                    toRemove.add(x);
+                }
+        );
+        for (String str : toRemove) {
+            if (!str.equals(" ")) {
+                text = text.replaceAll(str, "");
+            }
+        }
+        return new Pair<>(text, list);
+    }
+
+    public static List<Person> pairStrings(String[] streamStr) {
+        List<Person> people = StreamEx.of(streamStr)
+                .sequential()
+                .collect(PersonCollector.collector());
+        return people;
+    }
+
     public static List<String> getFullNames(String text) {
+        text = getPlainTextWithouRegexCharacters(text);
+        List<String> result = new ArrayList<>();
         var regex = "[A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}[ ][A-ZĄĆĘŁŚÓŹŻ][a-ząęćżźłó]{0,19}";
-        text = text.replaceAll("[”„]", "");
+        var tuple = getFamillyNames(text);
+        text = tuple.getValue0();
+        result.addAll(tuple.getValue1());
         String[] split = text.split(regex);
         for (var s : split) {
             if (Strings.isNotBlank(s)) {
@@ -57,12 +100,16 @@ public class ODSReader {
             }
         }
         List<String> list = Arrays.asList(text.split("\n"));
-        List<String> result = new ArrayList<>();
         for (var s : list) {
             if (Strings.isNotBlank(s)) {
                 result.add(s);
             }
         }
         return result;
+    }
+
+    public static String getPlainTextWithouRegexCharacters(String text) {
+        return text.replaceAll("[”„]", "")
+                .replaceAll("[\\(\\)\\.\\{\\}\\[\\]]", "");
     }
 }
