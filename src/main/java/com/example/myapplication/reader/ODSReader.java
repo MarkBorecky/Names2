@@ -8,7 +8,10 @@ import one.util.streamex.StreamEx;
 import org.apache.logging.log4j.util.Strings;
 import org.javatuples.Pair;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,13 +72,15 @@ public class ODSReader {
         List<Person> people = pairStrings(streamStr);
 
         people.forEach(p -> list.add(p.toString()));
-        var surname = people.get(people.size() - 1).lastName();
-        toRemove.add(firstFullName);
-        fullNames.forEach(x -> {
-                    list.add(String.format("%s %s", surname, x));
-                    toRemove.add(x);
-                }
-        );
+        if (people.size() > 0) {
+            var surname = people.get(people.size() - 1).lastName();
+            toRemove.add(firstFullName);
+            fullNames.forEach(x -> {
+                        list.add(String.format("%s %s", surname, x));
+                        toRemove.add(x);
+                    }
+            );
+        }
         for (String str : toRemove) {
             if (!str.equals(" ")) {
                 text = text.replaceAll(str, "");

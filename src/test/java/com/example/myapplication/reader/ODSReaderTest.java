@@ -3,9 +3,13 @@ package com.example.myapplication.reader;
 import com.example.myapplication.model.Card;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ODSReaderTest {
@@ -132,7 +136,7 @@ public class ODSReaderTest {
     public void checkBorderCase9() {
         var text = "Dfg dfg dgf dgddg Poźniakowowie Filip, Stefania, Melecjusz df fdfdf ddffd Ddf dfgdf fdgd";
         var list = ODSReader.getFullNames(text);
-        assertEquals(List.of("Poźniakowowie Filip","Poźniakowowie Stefania", "Poźniakowowie Melecjusz"), list);
+        assertEquals(List.of("Poźniakowowie Filip", "Poźniakowowie Stefania", "Poźniakowowie Melecjusz"), list);
     }
 
     @Test
@@ -151,7 +155,26 @@ public class ODSReaderTest {
         assertEquals(expected.size(), result.size());
         expected.forEach(x -> result.contains(x));
     }
+
+    @Test
+    public void checkBorderCase11() {
+        var text = "Odmowa przyłączenia maj. rząd. Krasne z par. przebrodzkiej do pohorskiej";
+        var result = ODSReader.getFullNames(text);
+        System.out.println("result = " + result);
+        assertEquals(Collections.EMPTY_LIST, result);
+    }
+
+    @Test
+    public void checkBorderCase12() {
+        var text = new String[][]{{"", "", "", "", "", "Odmowa przyłączenia maj. rząd. Krasne z par. przebrodzkiej do pohorskiej", ""}};
+        var result = ODSReader.getDataDaoList(text);
+        var expected = List.of(new Card("Odmowa przyłączenia maj. rząd. Krasne z par. przebrodzkiej do pohorskiej", Collections.EMPTY_LIST));
+        for (var i = 0; i < result.size(); i++) {
+            assertEquals(expected.get(i), result.get(i));
+        }
+    }
 }
+
 
 
 
