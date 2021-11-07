@@ -35,16 +35,12 @@ public class ODSReader {
                 .skip(1)
                 .map(ODSReader::getColumn5)
                 .filter(Strings::isNotBlank)
-                .map(ODSReader::getCards)
+                .map(CardConverter::getCards)
                 .filter(x -> x != null)
                 .collect(Collectors.toList());
     }
 
     private static String getColumn5(Object[] objects) {
         return (String) objects[5];
-    }
-
-    public static Card getCards(String text) {
-        return new Card(text, CardConverter.getFullNames(text));
     }
 }
