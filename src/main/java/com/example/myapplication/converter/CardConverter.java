@@ -1,5 +1,6 @@
 package com.example.myapplication.converter;
 
+import com.example.myapplication.model.PersonCollector2;
 import com.example.myapplication.model.Person;
 import com.example.myapplication.model.PersonCollector;
 import one.util.streamex.StreamEx;
@@ -9,12 +10,27 @@ import org.javatuples.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CardConverter {
 
     public static List<String> getFullNames2(String text) {
-        throw new IllegalArgumentException();
+        text = cleanTextFromUnnecessaryParts(text);
+        List<String> names = filterNames(text);
+        return names;
     }
+
+    public static List<String> filterNames(String text) {
+        List<String> list = List.of(text.split("\n"));
+        return list.stream().sequential().collect(PersonCollector2.collector())
+                .stream().map(p->p.toString()).collect(Collectors.toList());
+    }
+
+    public static String cleanTextFromUnnecessaryParts(String text) {
+        return text.replaceAll(" [0-9a-zżźóąęćśł,\\.\\(\\)\\{\\}\\[\\]]{1,30}", " _")
+                .replaceAll("( _){1,99} ", "\n");
+    }
+
 
     public static List<String> getFullNames(String text) {
         text = getPlainTextWithouRegexCharacters(text);

@@ -68,7 +68,7 @@ public class CardConverterTest {
     @Test
     public void shouldGetFirstnameAndLastname() {
         var text = "Do sdf Mark Smith sdf sd fsdf John Doe sf sf sdf.";
-        var result = getFullNames(text);
+        var result = getFullNames2(text);
         List<String> expected = List.of("Mark Smith", "John Doe");
         assertEquals(expected, result);
     }
@@ -178,6 +178,38 @@ public class CardConverterTest {
     public void checkBorderCase13() {
         var text = "Przesłanie wykazów osób, które przystąpiły lub nie do spowiedzi za r. 1854. Przyjmowanie do spowiedzi żołnierzy w cerkwiach niewojskowych. Oddelegowanie duchownego dla eksportacji zwłok szer. Andrejewa Aleksego";
         var result = getFullNames(text);
+        assertEquals("Andrejewa Aleksego", result.get(0));
+    }
+
+    @Test
+    public void checkBorderCase14() {
+        var text = "Do sdf Mark Smith sdf sd fsdf John Doe sf sf sdf.";
+        var result = getFullNames2(text);
+        System.out.println("result = " + result);
+        assertEquals(2, result.size());
+        assertEquals("Mark Smith", result.get(0));
+        assertEquals("John Doe", result.get(1));
+    }
+
+    @Test
+    public void shouldRemoveUnnecessaryWords() {
+        var text = "Przesłanie wykazów osób, które przystąpiły lub nie do spowiedzi za r. 1854. Przyjmowanie do spowiedzi żołnierzy w cerkwiach niewojskowych. Oddelegowanie duchownego dla eksportacji zwłok szer. Andrejewa Aleksego";
+        String result = cleanTextFromUnnecessaryParts(text);
+        System.out.println("result = " + result);
+        assertEquals("Przesłanie\n" +
+                "Przyjmowanie\n" +
+                "Oddelegowanie\n" +
+                "Andrejewa Aleksego", result);
+    }
+
+    @Test
+    public void shouldGetFullNames2() {
+        var text = "Przesłanie\n" +
+                "Przyjmowanie\n" +
+                "Oddelegowanie\n" +
+                "Andrejewa Aleksego";
+        var result = filterNames(text);
+        System.out.println("result = " + result);
         assertEquals("Andrejewa Aleksego", result.get(0));
     }
 }
