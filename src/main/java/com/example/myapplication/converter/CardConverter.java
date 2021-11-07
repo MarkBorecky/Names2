@@ -66,8 +66,11 @@ public class CardConverter {
     }
 
     public static String getPlainTextWithouRegexCharacters(String text) {
-        return text.replaceAll("[”„]", "")
-                .replaceAll("[\\(\\)\\.\\{\\}\\[\\]]", "");
+        return text.replaceAll("[”„]", "");
+    }
+
+    public static String clearText(String text) {
+        return text.replaceAll("[”„]", "");
     }
 
 
@@ -115,11 +118,11 @@ public class CardConverter {
     }
 
     public static Card getCards(String text) {
-        return new Card(text, CardConverter.getFullNames(text));
+        return new Card(text, CardConverter.getNamesList(text));
     }
 
     public static List<String> getNamesList(String text) {
-        var matcher = PATTERN.matcher(text);
+        var matcher = PATTERN.matcher(clearText(text));
         var result = new ArrayList<String>();
         while (matcher.find()) {
             result.addAll(unwrapIfIsFamilyList(matcher.group()));

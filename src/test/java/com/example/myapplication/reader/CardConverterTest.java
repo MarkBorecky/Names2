@@ -23,4 +23,12 @@ public class CardConverterTest {
         System.out.println("list = " + list);
         assertEquals(List.of("Poźniakowowie Filip", "Poźniakowowie Stefania", "Poźniakowowie Melecjusz"), list);
     }
+
+    @Test
+    public void getFullNamesTest3() {
+        var text = "„Pignilewski” Jan uczeń żyrowickich szkół duchownych udzielenie miejsca ponomara – zwolnienie za niespełnianie obowiązków – udzielenie miejsca djaczka";
+        var list = getNamesList(text);
+        System.out.println("list = " + list);
+        assertEquals(List.of("Pignilewski Jan"), list);
+    }
 }
