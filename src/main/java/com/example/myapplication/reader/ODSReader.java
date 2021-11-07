@@ -4,17 +4,16 @@ import com.example.myapplication.converter.CardConverter;
 import com.example.myapplication.model.Card;
 import com.github.miachm.sods.SpreadSheet;
 import org.apache.logging.log4j.util.Strings;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ODSReader {
-    public static Predicate<? super String> startFromCapital = s -> s.matches("[A-ZĄĆĘŁŚÓŹŻ][a-ząęćśżźłó]{1,9}");
 
     public static List<Card> read(String s) throws IOException {
         File initialFile = new File(s);
@@ -36,7 +35,6 @@ public class ODSReader {
                 .map(ODSReader::getColumn5)
                 .filter(Strings::isNotBlank)
                 .map(CardConverter::getCards)
-                .filter(x -> x != null)
                 .collect(Collectors.toList());
     }
 
