@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,10 +24,13 @@ public class ODSReader {
 
     public static List<Card> read(InputStream is) throws IOException {
         var spread = new SpreadSheet(is);
-        var sheet = spread.getSheets().get(0);
-        var range = sheet.getDataRange();
-        var values = range.getValues();
-        return getDataDaoList(values);
+        var result = new ArrayList<Card>();
+        for (var sheet : spread.getSheets()) {
+            var range = sheet.getDataRange();
+            var values = range.getValues();
+            result.addAll(getDataDaoList(values));
+        }
+        return result;
     }
 
     public static List<Card> getDataDaoList(Object[][] values) {

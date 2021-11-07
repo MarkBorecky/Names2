@@ -22,6 +22,11 @@ public class MyApplication implements CommandLineRunner {
         return cards;
     }
 
+    @RequestMapping("/not-empty-cards")
+    List<Card> getNotEmptyCards() {
+        return cards.stream().filter(card -> card.fullName().size() > 0).toList();
+    }
+
     public static void main(String... args) {
         SpringApplication.run(MyApplication.class, args);
     }
