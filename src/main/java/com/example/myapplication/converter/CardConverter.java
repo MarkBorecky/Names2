@@ -1,9 +1,11 @@
 package com.example.myapplication.converter;
 
 import com.example.myapplication.model.Card;
+import com.example.myapplication.model.Name;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
