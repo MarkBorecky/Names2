@@ -46,7 +46,7 @@ public class MyApplication implements CommandLineRunner {
 
     @RequestMapping("/unique")
     List<String> getUniqueNames() {
-        return names.stream().map(Name::name).distinct().toList();
+        return names.stream().map(Name::name).distinct().sorted().toList();
     }
 
     @RequestMapping("/not-empty-cards")
